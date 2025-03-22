@@ -1,25 +1,44 @@
-// Defining text characters for the empty and full hearts for you to use later.
-const EMPTY_HEART = '♡'
-const FULL_HEART = '♥'
-
-// Your JavaScript code goes here!
+// Defining text characters for the empty and full hearts
+const EMPTY_HEART = '♡';
+const FULL_HEART = '♥';
 
 
+const hearts = document.querySelectorAll('.heart');
+const errorModal = document.getElementById('error-modal');
+const errorMessage = document.getElementById('error-message');
 
 
-//------------------------------------------------------------------------------
-// Don't change the code below: this function mocks the server response
-//------------------------------------------------------------------------------
-
-function mimicServerCall(url="http://mimicServer.example.com", config={}) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      let isRandomFailure = Math.random() < .2
-      if (isRandomFailure) {
-        reject("Random server error. Try again.");
+function handleHeartClick(event) {
+  const heart = event.target; 
+  
+  
+  mimicServerCall()
+    .then(() => {
+      
+      if (heart.classList.contains('empty')) {
+        heart.innerHTML = FULL_HEART; 
+        heart.classList.remove('empty'); 
+        heart.classList.add('activated-heart'); 
       } else {
-        resolve("Pretend remote server notified of action!");
+        heart.innerHTML = EMPTY_HEART; 
+        
+        heart.classList.remove('activated-heart'); 
+        heart.classList.add('empty'); 
       }
-    }, 300);
-  });
+    })
+    .catch((error) => {
+      
+      errorMessage.innerText = error; 
+      errorModal.classList.remove('hidden'); 
+      
+      
+      setTimeout(() => {
+        errorModal.classList.add('hidden'); 
+      }, 3000);
+    });
 }
+
+
+hearts.forEach(heart => {
+  heart.addEventListener('click', handleHeartClick);
+});
